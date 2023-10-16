@@ -2,6 +2,9 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+@app.post("/cloneRepo")
+def clone_repo(repo_link: str):
+    return {
+        "repo_link": repo_link
+    }
+
