@@ -2,8 +2,14 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY ./requirements.txt /app/requirements.txt
-COPY ./api.py /app/api.py
+RUN apt-get update && \
+    apt-get install -y git
+
+RUN git config --global url."https://$GIT_USERNAME:$GIT_TOKEN@github.com/".insteadOf "https://github.com/"
+
+COPY ./requirements.txt requirements.txt
+COPY ./api.py api.py
+COPY utils/ utils/
 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
