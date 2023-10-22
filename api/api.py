@@ -14,7 +14,8 @@ def parse_github_repo(repo_link: str):
 
     # clone project in directory_path
     directory_path = f"{username}/{project_name}/"
-    clone_github_repo(username, project_name, directory_path)
+    if not clone_github_repo(username, project_name, directory_path):
+        return SUCCESS_OUTPUT
 
     # TODO: Parse & Embed docs from code
 

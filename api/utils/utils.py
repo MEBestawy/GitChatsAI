@@ -24,9 +24,11 @@ def match_github_repo_info(repo_link: str):
 def clone_github_repo(username: str, project_name: str, target_directory_path: str):
     """
     Clones the Github repo named <project_name> under <username>'s account into <target_directory_path>.
+
+    Returns a bool indicating whether it cloned a new repo or not.
     """
     if os.path.exists(target_directory_path):
-        return
+        return False
 
     clone_command = [
         "git",
@@ -41,3 +43,4 @@ def clone_github_repo(username: str, project_name: str, target_directory_path: s
             status_code=404,
             detail="Error cloning the repository. Are you sure this url links to a repo?",
         )
+    return True
