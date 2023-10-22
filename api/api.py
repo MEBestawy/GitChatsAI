@@ -12,7 +12,7 @@ def parse_github_repo(repo_link: str):
     match = match_github_repo_info(repo_link)
     username, project_name = match.group("username"), match.group("project_name")
 
-    # clone project in
+    # clone project in directory_path
     directory_path = f"{username}/{project_name}/"
     clone_github_repo(username, project_name, directory_path)
 
