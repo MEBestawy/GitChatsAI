@@ -1,8 +1,6 @@
 from fastapi import FastAPI
-from utils.utils import match_github_repo_info, clone_github_repo
-
-from dotenv import load_dotenv
-load_dotenv()
+from config import CLONED_PROJECTS_BASE_DIRECTORY
+from utils.utils import match_github_repo_info, clone_github_repo, save_repo_embeddings
 
 app = FastAPI()
 
@@ -16,11 +14,12 @@ def parse_github_repo(repo_link: str):
     username, project_name = match.group("username"), match.group("project_name")
 
     # clone project in directory_path
-    project_directory_path = f"{username}/{project_name}/"
+    project_directory_path = (
+        f"{CLONED_PROJECTS_BASE_DIRECTORY}/{username}/{project_name}/"
+    )
 
     if not clone_github_repo(username, project_name, project_directory_path):
         return SUCCESS_OUTPUT
 
-    # TODO: Parse & Embed docs from code
-
+    save_repo_embeddings(username, project_name, project_directory_path)
     return SUCCESS_OUTPUT
