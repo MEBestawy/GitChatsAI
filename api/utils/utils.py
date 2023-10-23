@@ -1,4 +1,8 @@
 from fastapi import HTTPException
+from config import FILE_EXTENSIONS, QDRANT_URL
+from langchain.document_loaders import DirectoryLoader, TextLoader
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores.qdrant import Qdrant
 import re, os, subprocess
 
 
@@ -24,9 +28,11 @@ def match_github_repo_info(repo_link: str):
 def clone_github_repo(username: str, project_name: str, target_directory_path: str):
     """
     Clones the Github repo named <project_name> under <username>'s account into <target_directory_path>.
+
+    Returns a bool indicating whether it cloned a new repo or not.
     """
     if os.path.exists(target_directory_path):
-        return
+        return False
 
     clone_command = [
         "git",
@@ -41,3 +47,28 @@ def clone_github_repo(username: str, project_name: str, target_directory_path: s
             status_code=404,
             detail="Error cloning the repository. Are you sure this url links to a repo?",
         )
+    return True
+
+
+def save_repo_embeddings(username: str, project_name: str, directory_path: str):
+    documents = []
+    for ext in FILE_EXTENSIONS:
+        documents += DirectoryLoader(
+            directory_path,
+            glob=f"**/*.{ext}",
+            recursive=True,
+            use_multithreading=True,
+            loader_cls=TextLoader,
+            silent_errors=True,
+            loader_kwargs={"autodetect_encoding": True},
+            show_progress=False,
+        ).load()
+
+    embeddings = OpenAIEmbeddings()
+
+    Qdrant.from_documents(
+        documents,
+        embeddings,
+        url=QDRANT_URL,
+        collection_name=f"{username}/{project_name}",
+    )
