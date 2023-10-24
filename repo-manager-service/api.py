@@ -4,6 +4,9 @@ from utils.utils import match_github_repo_info, clone_github_repo, save_repo_emb
 
 app = FastAPI()
 
+@app.get("/health")
+def health_check():
+	return {}
 
 @app.put("/parseGithubRepo")
 def parse_github_repo(repo_link: str):
