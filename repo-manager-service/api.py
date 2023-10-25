@@ -1,8 +1,16 @@
 from fastapi import FastAPI
 from config import CLONED_PROJECTS_BASE_DIRECTORY
 from utils.utils import match_github_repo_info, clone_github_repo, save_repo_embeddings
-
 app = FastAPI()
+from fastapi.middleware.cors import CORSMiddleware
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace "*" with the origin(s) of your React app
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health")
 def health_check():
