@@ -1,6 +1,33 @@
 import Header from "./Header";
+import {useState} from "react";
 
 const HomePage = () => {
+
+    const [repoLink, setRepoLink] = useState('');
+    const [responseMessage, setResponseMessage] = useState('');
+
+    const handleRepoLinkChange = (event) => {
+        setRepoLink(event.target.value);
+    };
+
+    const handleTrainModel = () => {
+        // Make a PUT request to the API
+        fetch('http://127.0.0.1:8000' + '/parseGithubRepo?repo_link=' + repoLink, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // Assuming the API returns a JSON response with a "result" field
+                setResponseMessage(data.result);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    };
+
     return (
         <>
             <Header/>
@@ -15,19 +42,25 @@ const HomePage = () => {
                                 <div className="relative">
                                     <label htmlFor="name" className="leading-7 text-sm text-gray-600">Github Repo</label>
                                     <input type="text" id="name" name="name"
-                                           className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"/>
+                                           className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                           onChange={handleRepoLinkChange}
+                                    />
                                 </div>
                             </div>
 
                             <div className="p-2 w-full">
                                 <button
-                                    className="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Train Model
+                                    className="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                                    onClick={handleTrainModel}
+                                >
+                                    Train Model
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+            {responseMessage && <p>Response: {responseMessage}</p>}
         </>
     );
 }
