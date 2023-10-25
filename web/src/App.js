@@ -5,16 +5,6 @@ import MyModel from "./MyModel";
 import 'tailwindcss/tailwind.css';
 
 function App() {
-  const [repoUrl, setRepoUrl] = useState('');
-
-  const handleRepoUrlChange = (event) => {
-    setRepoUrl(event.target.value);
-  };
-
-  const handleTrainModel = () => {
-    // You can add logic here to send the repo URL to the server for training the model.
-  };
-
   return (
       <Router>
         <Routes>
