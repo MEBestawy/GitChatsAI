@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: ./web
-        file: Dockerfile
+        file: ./web/Dockerfile
         push: true
         tags: gitchatsai/web:latest
 
@@ -39,6 +39,6 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: ./repo-manager-service
-        file: Dockerfile
+        file: ./repo-manager-serviceDockerfile
         push: true
         tags: gitchatsai/repo-manager-api:latest
