@@ -12,7 +12,7 @@ const HomePage = () => {
 
     const handleTrainModel = () => {
         // Make a PUT request to the API
-        fetch(`${process.env.REACT_APP_BACKEND_API_URL}/parseGithubRepo?repo_link=${repoLink}`, {
+        fetch(`${process.env.REACT_APP_REPO_MANAGER_API_URL}/parseGithubRepo?repo_link=${repoLink}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
