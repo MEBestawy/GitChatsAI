@@ -43,6 +43,7 @@ def clone_github_repo(username: str, project_name: str, target_directory_path: s
     result = subprocess.run(clone_command, capture_output=True, text=True)
 
     if result.returncode != 0:
+        print(result)
         raise HTTPException(
             status_code=404,
             detail="Error cloning the repository. Are you sure this url links to a repo?",
@@ -69,6 +70,7 @@ def save_repo_embeddings(username: str, project_name: str, directory_path: str):
     Qdrant.from_documents(
         documents,
         embeddings,
+        api_key="QFy82_cm889Hbft8rGp3fAezDY6kN_b8KTi_a926DRq8OfVpbX6N_Q",
         url=QDRANT_URL,
-        collection_name=f"{username}/{project_name}",
+        collection_name=f"{username}-{project_name}",
     )

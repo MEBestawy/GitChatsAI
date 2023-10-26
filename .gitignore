@@ -1,3 +1,9 @@
 .DS_Store
 .env
 __pycache__
+
+# Qdrant persistent volume 
+repo-manager-service/db_storage/
+
+# The cloned projects location
+repo-manager-service/cloned_projects/
