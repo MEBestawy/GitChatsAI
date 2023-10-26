@@ -70,7 +70,6 @@ def save_repo_embeddings(username: str, project_name: str, directory_path: str):
     Qdrant.from_documents(
         documents,
         embeddings,
-        api_key="QFy82_cm889Hbft8rGp3fAezDY6kN_b8KTi_a926DRq8OfVpbX6N_Q",
         url=QDRANT_URL,
         collection_name=f"{username}-{project_name}",
     )
