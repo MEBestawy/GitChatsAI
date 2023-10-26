@@ -39,6 +39,6 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: ./repo-manager-service
-        file: ./repo-manager-serviceDockerfile
+        file: ./repo-manager-service/Dockerfile
         push: true
         tags: gitchatsai/repo-manager-api:latest
