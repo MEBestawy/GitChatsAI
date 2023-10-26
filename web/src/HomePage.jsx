@@ -18,14 +18,20 @@ const HomePage = () => {
                 'Content-Type': 'application/json',
             },
         })
-            .then((response) => response.json())
+            .then((response) => {
+                // Check if the request was successful
+                if (!response.ok) 
+                    return response.json();
+
+                window.location.href = "/chat";
+            })
             .then((data) => {
                 // Assuming the API returns a JSON response with a "result" field
                 setResponseMessage(data.result);
             })
             .catch((error) => {
                 console.error('Error:', error);
-            });
+            });        
     };
 
     return (
