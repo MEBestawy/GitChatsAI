@@ -18,24 +18,40 @@ const HomePage = () => {
                 'Content-Type': 'application/json',
             },
         })
-            .then((response) => response.json())
+            .then((response) => {
+                // Check if the request was successful
+                if (!response.ok) 
+                    return response.json();
+
+                window.location.href = "/chat";
+            })
             .then((data) => {
                 // Assuming the API returns a JSON response with a "result" field
                 setResponseMessage(data.result);
             })
             .catch((error) => {
                 console.error('Error:', error);
-            });
+            });        
     };
 
     return (
         <>
-            <Header/>
-            <section className="text-gray-600 body-font relative">
-                <div className="container px-5 py-24 mx-auto">
-                    <div className="flex flex-col text-center w-full mb-12">
-                        <h1 className="sm:text-3xl text-2xl font-medium title-font mb-4 text-gray-900">Train Model</h1>
+            {/* <Header/> */}
+            <section className="text-gray-600 body-font relative flex items-center h-screen">
+                <div className="container px-5 py-26 mx-auto pb-20">
+                    <div className="container mx-auto flex p-5 flex-col md:flex-row items-center justify-center">
+                        <a className="flex title-font font-medium items-center text-gray-900 lg:items-center lg:justify-center mb-4 md:mb-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeLinecap="round"
+                                strokeLinejoin="round" strokeWidth="2"
+                                className="w-16 h-16 text-white p-2 bg-indigo-500 rounded-full" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                            </svg>
+                            <span className="ml-4 text-4xl">GitChats AI</span>
+                        </a>
                     </div>
+
+                    <div className="mb-3" />
+
                     <div className="lg:w-1/2 md:w-2/3 mx-auto">
                         <div className="flex flex-wrap -m-2">
                             <div className="p-2 w-full">
@@ -48,18 +64,21 @@ const HomePage = () => {
                                 </div>
                             </div>
 
+                            <div className="p-2 w-full mb-6" />
+
                             <div className="p-2 w-full">
                                 <button
                                     className="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
                                     onClick={handleTrainModel}
                                 >
-                                    Train Model
+                                    Get Chatting!
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+
             {responseMessage && <p>Response: {responseMessage}</p>}
         </>
     );
