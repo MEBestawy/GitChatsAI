@@ -15,3 +15,42 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+/* Chat bubble styles */
+.rounded-lg {
+    border-radius: 16px; /* Adjust the border-radius as needed */
+    max-width: 70%; /* Adjust the max width to prevent the chat bubble from being too wide */
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+/* Sender avatar */
+.rounded-full {
+    border-radius: 50%; /* Creates a circular avatar */
+}
+
+/* Adjust the background color, text color, and other styles as needed */
+.bg-gray-100 {
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+.bg-indigo-500 {
+    background-color: #6366f1; /* Adjust the color to your preference */
+    color: #fff; /* Text color for the avatar */
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Your existing CSS styles */
+
+#chat-box {
+    height: 70vh;
+    overflow-y: auto; /* Add scroll functionality if the content exceeds the height */
+}
+
+/* Your existing CSS styles */
