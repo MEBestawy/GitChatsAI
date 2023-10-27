@@ -5,8 +5,6 @@ WORKDIR /app/src
 RUN apt-get update && \
     apt-get install -y git
 
-RUN git config --global url."https://$GIT_USERNAME:$GIT_TOKEN@github.com/".insteadOf "https://github.com/"
-
 COPY ./requirements.txt ../requirements.txt
 COPY src/ .
 
