@@ -42,3 +42,4 @@ jobs:
         file: ./repo-manager-service/Dockerfile
         push: true
         tags: gitchatsai/repo-manager-api:latest
+        target: repo-manager-api-prod
