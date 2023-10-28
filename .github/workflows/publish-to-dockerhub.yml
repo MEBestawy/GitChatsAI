@@ -32,7 +32,7 @@ jobs:
         context: ./web
         file: ./web/Dockerfile
         push: true
-        tags: gitchatsai/web:latest
+        tags: gitchatsai/web
 
     - name: Build and push Repo Manager API service
       if: github.event.inputs.service == 'all' || github.event.inputs.service == 'repo-manager'
@@ -41,5 +41,5 @@ jobs:
         context: ./repo-manager-service
         file: ./repo-manager-service/Dockerfile
         push: true
-        tags: gitchatsai/repo-manager-api:latest
+        tags: gitchatsai/repo-manager-api
         target: repo-manager-api-prod
