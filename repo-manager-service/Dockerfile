@@ -4,7 +4,7 @@ WORKDIR /app/src
 
 RUN apt-get update && apt upgrade &&\
     apt-get install -y git &&\
-    apt-get install curl
+    apt-get install -y curl
 
 COPY ./requirements.txt ../requirements.txt
 COPY src/ .
