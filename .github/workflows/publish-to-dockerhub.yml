@@ -25,6 +25,9 @@ jobs:
         username: gitchatsai
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v1
+
     - name: Build and push Web service
       if: github.event.inputs.service == 'all' || github.event.inputs.service == 'web'
       uses: docker/build-push-action@v2
@@ -32,7 +35,9 @@ jobs:
         context: ./web
         file: ./web/Dockerfile
         push: true
-        tags: gitchatsai/web
+        tags: |
+          gitchatsai/web
+          ${{secrets.ECR_REPO_URL}}/web
 
     - name: Build and push Repo Manager API service
       if: github.event.inputs.service == 'all' || github.event.inputs.service == 'repo-manager'
@@ -41,5 +46,7 @@ jobs:
         context: ./repo-manager-service
         file: ./repo-manager-service/Dockerfile
         push: true
-        tags: gitchatsai/repo-manager-api
+        tags: |
+          gitchatsai/repo-manager-api
+          ${{secrets.ECR_REPO_URL}}/repo-manager-api
         target: repo-manager-api-prod
