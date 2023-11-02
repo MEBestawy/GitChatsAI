@@ -1,6 +1,6 @@
 
 from fastapi import HTTPException
-from src.config import FILE_EXTENSIONS, QDRANT_URL
+from config import FILE_EXTENSIONS, QDRANT_URL
 from langchain.document_loaders import DirectoryLoader, TextLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores.qdrant import Qdrant

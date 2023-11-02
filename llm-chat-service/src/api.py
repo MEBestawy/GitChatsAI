@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from src.config import CLONED_PROJECTS_BASE_DIRECTORY
-from processor import gitProcessor
-from src.utils.utils import match_github_repo_info
+from config import CLONED_PROJECTS_BASE_DIRECTORY
+from utils.processor import gitProcessor
+from utils.utils import match_github_repo_info
 app = FastAPI()
 from fastapi.middleware.cors import CORSMiddleware
 
