@@ -1,37 +1,40 @@
-import Header from "./Header";
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
+
 
 const HomePage = () => {
 
     const [repoLink, setRepoLink] = useState('');
     const [responseMessage, setResponseMessage] = useState('');
+    const navigate = useNavigate();
 
     const handleRepoLinkChange = (event) => {
         setRepoLink(event.target.value);
     };
 
     const handleTrainModel = () => {
-        // Make a PUT request to the API
+
         fetch(`${process.env.REACT_APP_REPO_MANAGER_API_URL}/parseGithubRepo?repo_link=${repoLink}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
         })
-            .then((response) => {
-                // Check if the request was successful
-                if (!response.ok) 
-                    return response.json();
+        .then((response) => {
+            // Check if the request was successful
+            if (!response.ok)
+                return response.json();
+           sessionStorage.setItem('repoLink', repoLink);
 
-                window.location.href = "/chat";
-            })
-            .then((data) => {
-                // Assuming the API returns a JSON response with a "result" field
-                setResponseMessage(data.result);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });        
+            navigate('/chat');
+        })
+        .then((data) => {
+            // Assuming the API returns a JSON response with a "result" field
+            setResponseMessage(data.result);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
     };
 
     return (
