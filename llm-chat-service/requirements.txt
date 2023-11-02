@@ -1,0 +1,8 @@
+fastapi==0.103.2
+uvicorn==0.23.2
+black==23.9.1
+langchain==0.0.311
+python-dotenv==1.0.0
+qdrant-client==1.6.3
+openai==0.27.5
+tiktoken==0.5.1

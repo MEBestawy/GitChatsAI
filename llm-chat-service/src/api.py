@@ -15,6 +15,10 @@ app.add_middleware(
 )
 
 
+@app.get("/health")
+def health_check():
+	return {}
+
 @app.put("/query")
 def askme(query: str , repo_link: str):
 
