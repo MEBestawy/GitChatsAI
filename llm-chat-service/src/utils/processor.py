@@ -1,5 +1,6 @@
 
 from fastapi import HTTPException
+from qdrant_client import QdrantClient
 from config import FILE_EXTENSIONS, QDRANT_URL
 from langchain.document_loaders import DirectoryLoader, TextLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -46,35 +47,18 @@ class gitProcessor:
         )
 
   
-    def processing(username: str, project_name: str, directory_path: str, query: str):
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
-        documents = []
-        for ext in FILE_EXTENSIONS:
-            documents += DirectoryLoader(
-                directory_path,
-                glob=f"**/*.{ext}",
-                recursive=True,
-                use_multithreading=True,
-                loader_cls=TextLoader,
-                silent_errors=True,
-                loader_kwargs={"autodetect_encoding": True},
-                show_progress=False,
-            ).load()
-
+    def processing(collection_name: str, query: str):
         embeddings = OpenAIEmbeddings()
-        vectorized_docs = [embeddings.embed(doc) for doc in documents]
-        qdrant = Qdrant.from_documents(vectorized_docs, embeddings,url= QDRANT_URL, collection_name=f"{username}-{project_name}")
+        client = QdrantClient(url=QDRANT_URL)
+        qdrant = Qdrant(client, collection_name, embeddings)
         top_5_results = qdrant.similarity_search(query, k=5)
        
         content_list = [result['page_content'] for result in top_5_results]
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
 
-        
         split_docs = text_splitter.split_documents(content_list)
         map_result = self.map_chain.run(split_docs)
-        
         doc_summaries_dict = {'doc_summaries': map_result}
-        
-       
         summary = self.reduce_chain.run(doc_summaries_dict)
 
         return summary

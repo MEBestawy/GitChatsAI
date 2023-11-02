@@ -31,8 +31,7 @@ def askme(query: str , repo_link: str):
     )
     processor_instance = gitProcessor()
 
-    
-    result = processor_instance.processing(username, project_name, project_directory_path, query)
+    result = processor_instance.processing(f"{username}-{project_name}", query)
 
     return result 
     
