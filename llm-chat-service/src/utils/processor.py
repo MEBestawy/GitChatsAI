@@ -25,10 +25,17 @@ class gitProcessor:
             Helpful Answer:"""
         self.map_prompt = PromptTemplate.from_template(self.map_template)
         self.map_chain = LLMChain(llm=self.llm, prompt=self.map_prompt)
-        self.reduce_template = """The following is set of summaries:
-        {doc_summaries}
-        Take these and distill it into a final, consolidated summary of the main themes in more than 150 but less than 350 words. 
-        Helpful Answer:"""
+        self.reduce_template = """
+    You are an assistant that specializes in software engineering, tasked with analyzing a code repository. You will be given a question regarding a codebase and you should answer it given the available context documents.
+    Any mention of this project/repo/codebase/etc... refers to the {project_name} repo.
+    
+    Keep your answer under 100 words.
+    If you are unsure, then prefix your answer with "I am not sure, "
+    QUESTION: {query}
+
+    CONTEXT DOCUMENTS ABOUT PROJECT: {doc_summaries}
+    
+    ANSWER:"""
         self.reduce_prompt = PromptTemplate.from_template(self.reduce_template)
         self.reduce_chain = LLMChain(llm=self.llm, prompt=self.reduce_prompt)
         self.combine_documents_chain = StuffDocumentsChain(
@@ -57,7 +64,11 @@ class gitProcessor:
         split_docs = text_splitter.split_documents(top_5_results)
         map_result = self.map_chain.run(split_docs)
         doc_summaries_dict = {'doc_summaries': map_result}
-        summary = self.reduce_chain.run(doc_summaries_dict)
+        summary = self.reduce_chain.run(
+            doc_summaries=doc_summaries_dict,
+            query=query,
+            project_name=collection_name
+        )
 
         return {"message": summary}
     
