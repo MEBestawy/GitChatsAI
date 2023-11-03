@@ -26,6 +26,19 @@ services:
     volumes:
       - ./repo-manager-service/src/:/app/src
       - ./repo-manager-service/cloned_projects/:/app/cloned_projects
+  llm-chat-api:
+    build:
+      context: ./llm-chat-service/
+      dockerfile: Dockerfile
+      target: llm-chat-api-dev
+    ports:
+      - "8080:8000"
+    env_file:
+      - ./llm-chat-service/.env
+    depends_on:
+      - qdrant-db
+    volumes:
+      - ./llm-chat-service/src/:/app/src
   qdrant-db:
     image: qdrant/qdrant
     ports:
