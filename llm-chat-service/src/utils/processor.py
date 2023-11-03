@@ -47,21 +47,19 @@ class gitProcessor:
         )
 
   
-    def processing(collection_name: str, query: str):
+    def processing(self, collection_name: str, query: str):
         embeddings = OpenAIEmbeddings()
         client = QdrantClient(url=QDRANT_URL)
         qdrant = Qdrant(client, collection_name, embeddings)
-        top_5_results = qdrant.similarity_search(query, k=5)
-       
-        content_list = [result['page_content'] for result in top_5_results]
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
+        top_5_results = qdrant.similarity_search(query, k=2)
 
-        split_docs = text_splitter.split_documents(content_list)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
+        split_docs = text_splitter.split_documents(top_5_results)
         map_result = self.map_chain.run(split_docs)
         doc_summaries_dict = {'doc_summaries': map_result}
         summary = self.reduce_chain.run(doc_summaries_dict)
 
-        return summary
+        return {"message": summary}
     
     
     
