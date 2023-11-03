@@ -1,6 +1,7 @@
 
 from fastapi import HTTPException
-from src.config import FILE_EXTENSIONS, QDRANT_URL
+from qdrant_client import QdrantClient
+from config import FILE_EXTENSIONS, QDRANT_URL
 from langchain.document_loaders import DirectoryLoader, TextLoader
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.vectorstores.qdrant import Qdrant
@@ -24,10 +25,17 @@ class gitProcessor:
             Helpful Answer:"""
         self.map_prompt = PromptTemplate.from_template(self.map_template)
         self.map_chain = LLMChain(llm=self.llm, prompt=self.map_prompt)
-        self.reduce_template = """The following is set of summaries:
-        {doc_summaries}
-        Take these and distill it into a final, consolidated summary of the main themes in more than 150 but less than 350 words. 
-        Helpful Answer:"""
+        self.reduce_template = """
+    You are an assistant that specializes in software engineering, tasked with analyzing a code repository. You will be given a question regarding a codebase and you should answer it given the available context documents.
+    Any mention of this project/repo/codebase/etc... refers to the {project_name} repo.
+    
+    Keep your answer under 100 words.
+    If you are unsure, then prefix your answer with "I am not sure, "
+    QUESTION: {query}
+
+    CONTEXT DOCUMENTS ABOUT PROJECT: {doc_summaries}
+    
+    ANSWER:"""
         self.reduce_prompt = PromptTemplate.from_template(self.reduce_template)
         self.reduce_chain = LLMChain(llm=self.llm, prompt=self.reduce_prompt)
         self.combine_documents_chain = StuffDocumentsChain(
@@ -46,38 +54,23 @@ class gitProcessor:
         )
 
   
-    def processing(username: str, project_name: str, directory_path: str, query: str):
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
-        documents = []
-        for ext in FILE_EXTENSIONS:
-            documents += DirectoryLoader(
-                directory_path,
-                glob=f"**/*.{ext}",
-                recursive=True,
-                use_multithreading=True,
-                loader_cls=TextLoader,
-                silent_errors=True,
-                loader_kwargs={"autodetect_encoding": True},
-                show_progress=False,
-            ).load()
-
+    def processing(self, collection_name: str, query: str):
         embeddings = OpenAIEmbeddings()
-        vectorized_docs = [embeddings.embed(doc) for doc in documents]
-        qdrant = Qdrant.from_documents(vectorized_docs, embeddings,url= QDRANT_URL, collection_name=f"{username}-{project_name}")
-        top_5_results = qdrant.similarity_search(query, k=5)
-       
-        content_list = [result['page_content'] for result in top_5_results]
+        client = QdrantClient(url=QDRANT_URL)
+        qdrant = Qdrant(client, collection_name, embeddings)
+        top_5_results = qdrant.similarity_search(query, k=2)
 
-        
-        split_docs = text_splitter.split_documents(content_list)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
+        split_docs = text_splitter.split_documents(top_5_results)
         map_result = self.map_chain.run(split_docs)
-        
         doc_summaries_dict = {'doc_summaries': map_result}
-        
-       
-        summary = self.reduce_chain.run(doc_summaries_dict)
+        summary = self.reduce_chain.run(
+            doc_summaries=doc_summaries_dict,
+            query=query,
+            project_name=collection_name
+        )
 
-        return summary
+        return {"message": summary}
     
     
     

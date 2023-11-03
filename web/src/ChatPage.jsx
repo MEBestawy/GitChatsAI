@@ -24,12 +24,11 @@ const ChatPage = () => {
             setMessages([...messages, newMessage, responseMessage]);
             setInput('');
 
-            fetch('/query', {
+            fetch(`${process.env.REACT_APP_LLM_CHAT_API_URL}/query?query=${input}&repo_link=${repoLink}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ query: input, repo_link: repoLink }),
+                }
             })
                 .then((response) => response.json())
                 .then((data) => {

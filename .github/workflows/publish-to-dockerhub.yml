@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       service:
-        description: 'Which service do you want to push? (web, repo-manager, all)'
+        description: 'Which service do you want to push? (web, repo-manager, llm-chat, all)'
         required: true
         default: 'all'
 
@@ -43,3 +43,13 @@ jobs:
         push: true
         tags: gitchatsai/repo-manager-api
         target: repo-manager-api-prod
+
+    - name: Build and push LLM Chat API service
+      if: github.event.inputs.service == 'all' || github.event.inputs.service == 'llm-chat'
+      uses: docker/build-push-action@v2
+      with:
+        context: ./llm-chat-service
+        file: ./llm-chat-service/Dockerfile
+        push: true
+        tags: gitchatsai/llm-chat-api
+        target: llm-chat-api-prod
