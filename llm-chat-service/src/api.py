@@ -24,11 +24,6 @@ def askme(query: str , repo_link: str):
 
     match = match_github_repo_info(repo_link)
     username, project_name = match.group("username"), match.group("project_name")
-
-    # clone project in directory_path
-    project_directory_path = (
-        f"{CLONED_PROJECTS_BASE_DIRECTORY}/{username}/{project_name}/"
-    )
     processor_instance = gitProcessor()
 
     result = processor_instance.processing(f"{username}-{project_name}", query)
