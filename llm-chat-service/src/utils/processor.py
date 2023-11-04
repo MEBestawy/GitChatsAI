@@ -44,7 +44,7 @@ class gitProcessor:
         self.reduce_documents_chain = ReduceDocumentsChain(
             combine_documents_chain=self.combine_documents_chain,
             collapse_documents_chain=self.combine_documents_chain,
-            token_max=4000,
+            token_max=200,
         )
         self.map_reduce_chain = MapReduceDocumentsChain(
             llm_chain=self.map_chain,
@@ -52,7 +52,6 @@ class gitProcessor:
             document_variable_name="docs",
             return_intermediate_steps=False,
         )
-
     
     def processing(self, collection_name: str, query: str):
         embeddings = OpenAIEmbeddings()
@@ -62,17 +61,10 @@ class gitProcessor:
 
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
         split_docs = text_splitter.split_documents(top_5_results)
-        map_result = self.map_chain.run(split_docs)
+        map_reduce_result = self.map_reduce_chain.run(split_docs)
 
         
-        doc_summaries_dict = {'doc_summaries': map_result}
-        summary = self.reduce_chain.run(
-            doc_summaries=doc_summaries_dict,
-            query=query,
-            project_name=collection_name
-        )
-
-        return {"message": summary}
+        return {"message": map_reduce_result}
     
     
     
