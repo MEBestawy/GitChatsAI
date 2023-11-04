@@ -21,7 +21,7 @@ class gitProcessor:
         self.llm = ChatOpenAI(temperature=0)
         self.map_template = """The following is a set of documents
           {docs}
-            Based on this list of docs, please identify the main themes 
+            Based on this list of docs, please concisely identify the main themes in one or two sentences per document, aiming for a short overview rather than detailed summaries 
             Helpful Answer:"""
         self.map_prompt = PromptTemplate.from_template(self.map_template)
         self.map_chain = LLMChain(llm=self.llm, prompt=self.map_prompt)
@@ -53,22 +53,6 @@ class gitProcessor:
             return_intermediate_steps=False,
         )
 
-    def condense_summaries(self, doc_summaries, max_tokens=4000):
-       
-        total_length = sum(len(summary) for summary in doc_summaries)
-        if total_length <= max_tokens:
-            return doc_summaries
-
-        # Calculate a scaling factor to reduce each summary proportionally
-        scaling_factor = max_tokens / total_length
-
-        condensed_summaries = []
-        for summary in doc_summaries:
-            # Truncate each summary proportionally to its length
-            truncated_length = int(len(summary) * scaling_factor)
-            condensed_summaries.append(summary[:truncated_length])
-        
-        return condensed_summaries
     
     def processing(self, collection_name: str, query: str):
         embeddings = OpenAIEmbeddings()
@@ -80,8 +64,6 @@ class gitProcessor:
         split_docs = text_splitter.split_documents(top_5_results)
         map_result = self.map_chain.run(split_docs)
 
-        condensed_summaries = self.condense_summaries(map_result, max_tokens=4000)
-        doc_summaries_dict = {'doc_summaries': condensed_summaries}
         
         doc_summaries_dict = {'doc_summaries': map_result}
         summary = self.reduce_chain.run(
