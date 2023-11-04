@@ -6,10 +6,8 @@ const ChatPage = () => {
     const [repoLink, setRepoLink] = useState('')
 
     useEffect(() => {
-        // Retrieve the value from local storage
-        console.log(123);
+         console.log(123);
          setRepoLink(sessionStorage.getItem('repoLink'));
-
          console.log(sessionStorage.getItem('repoLink'));
     }, []);
 
@@ -20,8 +18,6 @@ const ChatPage = () => {
     const handleSendMessage = () => {
         if (input.trim() !== '') {
             const newMessage = { text: input, user: 'user' };
-            const responseMessage = { text: 'hello world', user: 'bot' };
-            setMessages([...messages, newMessage, responseMessage]);
             setInput('');
 
             fetch(`${process.env.REACT_APP_LLM_CHAT_API_URL}/query?query=${input}&repo_link=${repoLink}`, {
