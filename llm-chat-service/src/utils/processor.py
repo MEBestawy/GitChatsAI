@@ -80,7 +80,7 @@ class gitProcessor:
         split_docs = text_splitter.split_documents(top_5_results)
         map_result = self.map_chain.run(split_docs)
 
-        condensed_summaries = self.condense_summaries(map_result, max_allowed_tokens=4000)
+        condensed_summaries = self.condense_summaries(map_result, max_tokens=4000)
         doc_summaries_dict = {'doc_summaries': condensed_summaries}
         
         doc_summaries_dict = {'doc_summaries': map_result}
