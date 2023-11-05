@@ -4,6 +4,7 @@ const ChatPage = () => {
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState([]);
     const [repoLink, setRepoLink] = useState('')
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
          console.log(123);
@@ -18,7 +19,11 @@ const ChatPage = () => {
     const handleSendMessage = () => {
         if (input.trim() !== '') {
             const newMessage = { text: input, user: 'user' };
+            messages.push(newMessage)
             setInput('');
+            setIsLoading(true);
+
+            messages.push({ text: 'Fetching Response from Bot...', user: 'bot' });
 
             fetch(`${process.env.REACT_APP_LLM_CHAT_API_URL}/query?query=${input}&repo_link=${repoLink}`, {
                 method: 'PUT',
@@ -29,11 +34,14 @@ const ChatPage = () => {
                 .then((response) => response.json())
                 .then((data) => {
                     const responseMessage = { text: data.message, user: 'bot' };
-                    setMessages([...messages, responseMessage]);
+                    messages.pop(); // Remove the "..." placeholder
+                    messages.push(responseMessage);
                 })
                 .catch((error) => {
                     console.error('API request error:', error);
-                });
+                }).finally(() => {
+                setIsLoading(false);
+            });
         }
     };
 
@@ -67,6 +75,7 @@ const ChatPage = () => {
                     </div>
                     <div className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200
                 h-72 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out">
+
                         <div className="chat-box">
                             {messages.map((message, index) => (
                                 <div key={index} className={`rounded-lg p-2 flex items-center ${message.user === 'bot' ? 'bg-gray-100' : ''}`}>
@@ -74,6 +83,7 @@ const ChatPage = () => {
                                 </div>
                             ))}
                         </div>
+
                     </div>
 
                     <div className="flex mx-auto mt-16 justify-center   ">

@@ -21,7 +21,7 @@ class gitProcessor:
         self.llm = ChatOpenAI(temperature=0)
         self.map_template = """The following is a set of documents
           {docs}
-            Based on this list of docs, please identify the main themes 
+            Based on this list of docs, please concisely identify the main themes in one or two sentences per document, aiming for a short overview rather than detailed summaries
             Helpful Answer:"""
         self.map_prompt = PromptTemplate.from_template(self.map_template)
         self.map_chain = LLMChain(llm=self.llm, prompt=self.map_prompt)
@@ -44,7 +44,7 @@ class gitProcessor:
         self.reduce_documents_chain = ReduceDocumentsChain(
             combine_documents_chain=self.combine_documents_chain,
             collapse_documents_chain=self.combine_documents_chain,
-            token_max=4000,
+            token_max=200,
         )
         self.map_reduce_chain = MapReduceDocumentsChain(
             llm_chain=self.map_chain,
@@ -62,8 +62,12 @@ class gitProcessor:
 
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
         split_docs = text_splitter.split_documents(top_5_results)
+        print(f'Split Docs: {split_docs}')
+
         map_result = self.map_chain.run(split_docs)
+
         doc_summaries_dict = {'doc_summaries': map_result}
+
         summary = self.reduce_chain.run(
             doc_summaries=doc_summaries_dict,
             query=query,
