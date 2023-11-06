@@ -70,9 +70,8 @@ class gitProcessor:
             query=query,
             project_name=collection_name
         )
-
         
-        return {"message": map_reduce_result}
+        return {"message": summary}
     
     
     
